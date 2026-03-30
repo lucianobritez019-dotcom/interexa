@@ -19,7 +19,11 @@ jobs:
           cache: npm
 
       - run: npm ci
+
       - run: npm run build
+        env:
+          VITE_SUPABASE_URL: https://vdgvncfujtfnnwmimtry.supabase.co
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkZ3ZuY2Z1anRmbm53bWltdHJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMDg3MDMsImV4cCI6MjA4OTU4NDcwM30.u_5VTYmvCnykeFQj-nU6rvxLOdSHVfcsfhdnHM9h6dc
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
