@@ -2,9 +2,9 @@ import React from 'react'
 import useStore from '../store/useStore'
 
 const CATEGORIAS = [
-  { value: 'primera', label: 'Primera' },
+  { value: 'primera',   label: 'Primera' },
   { value: 'ejecutivo', label: 'Ejecutivo' },
-  { value: 'master', label: 'Master' },
+  { value: 'master',    label: 'Master' },
 ]
 
 export default function CategoryTabs({ onChange }) {
@@ -16,20 +16,24 @@ export default function CategoryTabs({ onChange }) {
   }
 
   return (
-    <div className="flex bg-gray-100 rounded-xl p-1 mb-4">
-      {CATEGORIAS.map((cat) => (
-        <button
-          key={cat.value}
-          onClick={() => handleChange(cat.value)}
-          className={`flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-150 ${
-            categoriaActiva === cat.value
-              ? 'bg-primary text-white shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          {cat.label}
-        </button>
-      ))}
+    <div className="flex bg-surface rounded-xl p-1 mb-4 border border-surface-line gap-1">
+      {CATEGORIAS.map((cat) => {
+        const isActive = categoriaActiva === cat.value
+        return (
+          <button
+            key={cat.value}
+            onClick={() => handleChange(cat.value)}
+            className={`flex-1 py-2 px-2 rounded-lg text-sm font-semibold tracking-wide
+                        transition-all duration-200 ${
+              isActive
+                ? 'bg-primary text-white shadow-glow-sm'
+                : 'text-gray-500 hover:text-gray-200 hover:bg-surface-raised'
+            }`}
+          >
+            {cat.label}
+          </button>
+        )
+      })}
     </div>
   )
 }

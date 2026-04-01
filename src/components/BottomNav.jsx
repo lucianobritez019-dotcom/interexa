@@ -4,47 +4,45 @@ import { NavLink, useLocation } from 'react-router-dom'
 const NAV_ITEMS = [
   {
     to: '/posiciones',
-    label: 'Posiciones',
+    label: 'Tabla',
     icon: (active) => (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24"
-        stroke={active ? '#8B0000' : 'currentColor'} strokeWidth={active ? 2.5 : 2}>
-        <path strokeLinecap="round" strokeLinejoin="round"
-          d="M3 10h18M3 6h18M3 14h12M3 18h8" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 6h18M3 14h12M3 18h8" />
       </svg>
     ),
   },
   {
     to: '/goleadores',
-    label: 'Goleadores',
+    label: 'Goles',
     icon: (active) => (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24"
-        stroke={active ? '#8B0000' : 'currentColor'} strokeWidth={active ? 2.5 : 2}>
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}>
+        <circle cx="12" cy="12" r="10" strokeLinecap="round" />
         <path strokeLinecap="round" strokeLinejoin="round"
-          d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" />
-        <path strokeLinecap="round" strokeLinejoin="round"
-          d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+          d="M12 2v4m0 12v4M2 12h4m12 0h4m-4.93-7.07-2.83 2.83m-4.24 4.24-2.83 2.83m0-9.9 2.83 2.83m4.24 4.24 2.83 2.83" />
       </svg>
     ),
   },
   {
-    to: '/vallas',
-    label: 'Vallas',
+    to: '/fixture',
+    label: 'Fixture',
     icon: (active) => (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24"
-        stroke={active ? '#8B0000' : 'currentColor'} strokeWidth={active ? 2.5 : 2}>
-        <rect x="2" y="7" width="20" height="10" rx="1" strokeLinecap="round" strokeLinejoin="round" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 7v10M10 7v10M14 7v10M18 7v10" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}>
+        <rect x="3" y="4" width="18" height="18" rx="2" strokeLinecap="round" />
+        <path strokeLinecap="round" d="M16 2v4M8 2v4M3 10h18" />
       </svg>
     ),
   },
   {
-    to: '/fair-play',
-    label: 'Fair Play',
+    to: '/mi-perfil',
+    label: 'Perfil',
     icon: (active) => (
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24"
-        stroke={active ? '#8B0000' : 'currentColor'} strokeWidth={active ? 2.5 : 2}>
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor" strokeWidth={active ? 2.5 : 1.8}>
         <path strokeLinecap="round" strokeLinejoin="round"
-          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" />
       </svg>
     ),
   },
@@ -54,24 +52,41 @@ export default function BottomNav() {
   const location = useLocation()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-line z-40 safe-bottom">
+      {/* Top glow line */}
+      <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
       <div className="flex items-stretch">
         {NAV_ITEMS.map((item) => {
-          const isActive = location.pathname === item.to
+          const isActive = location.pathname.startsWith(item.to)
           return (
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors
-                ${isActive ? 'text-primary' : 'text-gray-400 hover:text-gray-700'}`}
+              className={`flex-1 flex flex-col items-center justify-center py-2.5 gap-1 relative
+                transition-all duration-200
+                ${isActive
+                  ? 'text-primary'
+                  : 'text-gray-600 hover:text-gray-300 active:text-gray-200'
+                }`}
             >
-              {item.icon(isActive)}
-              <span className={`text-[10px] font-medium leading-none ${isActive ? 'text-primary' : ''}`}>
+              {/* Active pill indicator at top */}
+              <span
+                className={`absolute top-0 left-1/2 -translate-x-1/2 h-0.5 rounded-b-full bg-primary transition-all duration-300 ${
+                  isActive ? 'w-8 opacity-100' : 'w-0 opacity-0'
+                }`}
+              />
+
+              {/* Icon wrapper with glow on active */}
+              <span className={`transition-all duration-200 ${isActive ? 'drop-shadow-[0_0_6px_rgba(204,26,26,0.6)]' : ''}`}>
+                {item.icon(isActive)}
+              </span>
+
+              <span className={`text-[10px] font-semibold leading-none tracking-wide transition-colors duration-200 ${
+                isActive ? 'text-primary' : 'text-gray-600'
+              }`}>
                 {item.label}
               </span>
-              {isActive && (
-                <span className="absolute bottom-0 w-8 h-0.5 bg-primary rounded-t-full" />
-              )}
             </NavLink>
           )
         })}

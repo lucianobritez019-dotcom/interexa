@@ -9,44 +9,50 @@ export default function Layout() {
   const overlayRef = useRef(null)
   const location = useLocation()
 
-  // Cerrar sidebar al cambiar de ruta
   useEffect(() => {
     setSidebarOpen(false)
   }, [location.pathname, setSidebarOpen])
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-surface-deep flex flex-col">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-primary shadow-lg">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-surface border-b border-surface-line shadow-inner-glow">
         <div className="flex items-center justify-between px-4 h-14">
+          {/* Hamburger */}
           <button
             onClick={toggleSidebar}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-white hover:bg-white/10 active:bg-white/20 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-400
+                       hover:text-white hover:bg-surface-hover active:bg-surface-raised transition-all duration-150"
             aria-label="Abrir menú"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
 
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
-              <span className="text-primary font-black text-xs leading-none">IE</span>
+          {/* Logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center shadow-glow-sm">
+              <span className="text-white font-display text-sm leading-none tracking-wider">IE</span>
             </div>
-            <h1 className="text-white font-black text-lg tracking-tight">InterExa</h1>
+            <h1 className="text-white font-display text-2xl tracking-widest leading-none">
+              INTER<span className="text-primary">EXA</span>
+            </h1>
           </div>
 
-          {/* Espacio derecho para balance */}
           <div className="w-9" />
         </div>
+
+        {/* Thin crimson line at bottom of header */}
+        <div className="h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
       </header>
 
-      {/* Overlay sidebar */}
+      {/* Sidebar overlay */}
       {sidebarOpen && (
         <div
           ref={overlayRef}
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -59,14 +65,13 @@ export default function Layout() {
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </aside>
 
-      {/* Contenido principal */}
+      {/* Main content */}
       <main className="flex-1 pt-14 pb-20 overflow-auto">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto page-enter">
           <Outlet />
         </div>
       </main>
 
-      {/* Bottom navigation */}
       <BottomNav />
     </div>
   )

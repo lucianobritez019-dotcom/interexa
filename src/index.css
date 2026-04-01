@@ -9,72 +9,125 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-surface-deep text-gray-100 font-sans;
     overscroll-behavior: none;
   }
 
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
 }
 
 @layer components {
+  /* ── Buttons ─────────────────────────────── */
   .btn-primary {
     @apply bg-primary text-white font-semibold px-4 py-2 rounded-lg
-           hover:bg-primary-900 active:scale-95 transition-all duration-150
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           hover:bg-primary-700 active:scale-[0.97] transition-all duration-150
+           disabled:opacity-40 disabled:cursor-not-allowed
+           shadow-glow-sm hover:shadow-glow;
   }
 
   .btn-secondary {
-    @apply bg-white text-primary border border-primary font-semibold px-4 py-2 rounded-lg
-           hover:bg-primary-50 active:scale-95 transition-all duration-150;
+    @apply bg-surface text-gray-200 border border-surface-line font-semibold px-4 py-2 rounded-lg
+           hover:border-primary/40 hover:bg-surface-hover active:scale-[0.97] transition-all duration-150;
   }
 
+  /* ── Cards ───────────────────────────────── */
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden;
+    @apply bg-surface rounded-xl border border-surface-line overflow-hidden shadow-inner-glow;
   }
 
+  .card-interactive {
+    @apply card transition-all duration-200 cursor-pointer
+           hover:-translate-y-0.5 hover:border-primary/40
+           hover:shadow-lg hover:shadow-black/50;
+  }
+
+  /* ── Inputs ──────────────────────────────── */
   .input-field {
-    @apply w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm
-           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-           placeholder:text-gray-400 transition-all;
+    @apply w-full border border-surface-line rounded-lg px-3 py-2.5 text-sm
+           bg-surface-raised text-gray-100
+           focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60
+           placeholder:text-gray-600 transition-all duration-200;
   }
 
+  /* ── Table ───────────────────────────────── */
   .table-row-highlight {
-    @apply bg-red-50 border-l-4 border-primary;
+    @apply bg-primary/10 border-l-2 border-primary;
   }
 
-  .badge-green {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+  /* ── Badges ──────────────────────────────── */
+  .badge-green  {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-green-950/80 text-green-400 border border-green-900/50;
   }
-
-  .badge-red {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800;
+  .badge-red    {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-red-950/80 text-red-400 border border-red-900/50;
   }
-
   .badge-yellow {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-yellow-950/80 text-yellow-400 border border-yellow-900/50;
   }
-
-  .badge-gray {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700;
+  .badge-gray   {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-surface-raised text-gray-400 border border-surface-line;
   }
 }
 
-/* Scrollbar personalizado */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+/* ── Page entry animation ────────────────── */
+.page-enter {
+  animation: pageEnter 0.3s ease-out;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #8B0000;
-  border-radius: 4px;
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Safe area para dispositivos con notch */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+/* ── Scrollbar ───────────────────────────── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cc1a1a; border-radius: 4px; }
+
+/* ── Safe area ───────────────────────────── */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* ── Scrollbar hide utility ──────────────── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Grid pattern (field texture) ────────── */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
+
+/* ── Radial gradient vignette ────────────── */
+.vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(12,14,16,0.85) 100%);
+  pointer-events: none;
+}
+
+/* ── Shimmer effect ──────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-line {
+  background: linear-gradient(90deg, #252c35 25%, #2e3640 50%, #252c35 75%);
+  background-size: 200% auto;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Score glow ──────────────────────────── */
+.score-glow {
+  text-shadow: 0 0 20px rgba(204, 26, 26, 0.5);
+}
+
+/* ── Medal colors ────────────────────────── */
+.medal-1 { color: #f5a623; text-shadow: 0 0 12px rgba(245,166,35,0.5); }
+.medal-2 { color: #9fb3c8; }
+.medal-3 { color: #cd7f32; }

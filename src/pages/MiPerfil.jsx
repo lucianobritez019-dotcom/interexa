@@ -6,8 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 export default function MiPerfil() {
   const { profile, refreshProfile } = useAuth()
   const [stats, setStats] = useState({ goles: 0, partidos: 0, amarillas: 0, rojas: 0 })
-  const [editing, setEditing] = useState(false)
-  const [form, setForm] = useState({})
+  const [pierna, setPierna] = useState('derecha')
   const [saving, setSaving] = useState(false)
   const [uploadingFoto, setUploadingFoto] = useState(false)
   const [msg, setMsg] = useState('')
@@ -15,12 +14,7 @@ export default function MiPerfil() {
 
   useEffect(() => {
     if (profile) {
-      setForm({
-        nombre: profile.nombre || '',
-        apellido: profile.apellido || '',
-        telefono: profile.telefono || '',
-        pierna_habil: profile.pierna_habil || 'derecha',
-      })
+      setPierna(profile.pierna_habil || 'derecha')
     }
   }, [profile])
 
@@ -45,25 +39,20 @@ export default function MiPerfil() {
     fetchStats()
   }, [profile])
 
-  const handleSave = async () => {
+  const handleSavePierna = async (value) => {
     setSaving(true)
     setMsg('')
     const { error } = await supabase
       .from('profiles')
-      .update({
-        nombre: form.nombre,
-        apellido: form.apellido,
-        telefono: form.telefono,
-        pierna_habil: form.pierna_habil,
-      })
+      .update({ pierna_habil: value })
       .eq('id', profile.id)
 
     if (error) {
-      setMsg('Error al guardar. Intentá de nuevo.')
+      setMsg('Error al guardar.')
     } else {
-      setMsg('Perfil actualizado correctamente.')
-      setEditing(false)
+      setMsg('Guardado.')
       refreshProfile()
+      setTimeout(() => setMsg(''), 2000)
     }
     setSaving(false)
   }
@@ -97,6 +86,7 @@ export default function MiPerfil() {
     await supabase.from('profiles').update({ foto_url }).eq('id', profile.id)
     refreshProfile()
     setMsg('Foto actualizada.')
+    setTimeout(() => setMsg(''), 2000)
     setUploadingFoto(false)
   }
 
@@ -110,26 +100,9 @@ export default function MiPerfil() {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-black text-gray-800">Mi Perfil</h2>
-        {!editing ? (
-          <button
-            onClick={() => setEditing(true)}
-            className="text-sm text-primary font-semibold hover:underline"
-          >
-            Editar
-          </button>
-        ) : (
-          <button
-            onClick={() => { setEditing(false); setMsg('') }}
-            className="text-sm text-gray-400 hover:text-gray-600"
-          >
-            Cancelar
-          </button>
-        )}
-      </div>
+      <h2 className="text-xl font-black text-gray-800">Mi Ficha</h2>
 
-      {/* Foto y datos básicos */}
+      {/* Foto y nombre */}
       <div className="card p-5">
         <div className="flex items-center gap-4">
           <div className="relative flex-shrink-0">
@@ -145,6 +118,7 @@ export default function MiPerfil() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingFoto}
+              title="Cambiar foto"
               className="absolute -bottom-1 -right-1 w-7 h-7 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary-900 transition-colors"
             >
               {uploadingFoto ? (
@@ -182,9 +156,14 @@ export default function MiPerfil() {
             </span>
           </div>
         </div>
+        {msg && (
+          <p className={`text-sm font-medium mt-3 ${msg.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
+            {msg}
+          </p>
+        )}
       </div>
 
-      {/* Estadísticas */}
+      {/* Estadísticas — solo lectura */}
       <div className="grid grid-cols-4 gap-2">
         {[
           { label: 'Partidos', value: stats.partidos, icon: '⚽', color: 'text-blue-600' },
@@ -200,90 +179,73 @@ export default function MiPerfil() {
         ))}
       </div>
 
-      {/* Datos editables */}
-      <div className="card p-4">
-        <h3 className="font-bold text-gray-700 mb-4">Datos personales</h3>
+      {/* Pierna hábil — editable */}
+      <div className="card p-4 space-y-3">
+        <h3 className="font-bold text-gray-700">Mi ficha</h3>
 
-        {editing ? (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Nombre</label>
-                <input
-                  type="text"
-                  value={form.nombre}
-                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">Apellido</label>
-                <input
-                  type="text"
-                  value={form.apellido}
-                  onChange={(e) => setForm({ ...form, apellido: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Teléfono</label>
-              <input
-                type="tel"
-                value={form.telefono}
-                onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-                placeholder="099 123 456"
-                className="input-field"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Pierna hábil</label>
-              <select
-                value={form.pierna_habil}
-                onChange={(e) => setForm({ ...form, pierna_habil: e.target.value })}
-                className="input-field"
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 mb-2">Pierna hábil</label>
+          <div className="flex gap-2">
+            {['derecha', 'izquierda'].map((op) => (
+              <button
+                key={op}
+                disabled={saving}
+                onClick={() => {
+                  setPierna(op)
+                  handleSavePierna(op)
+                }}
+                className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                  pierna === op
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-primary/50'
+                }`}
               >
-                <option value="derecha">Derecha</option>
-                <option value="izquierda">Izquierda</option>
-                <option value="ambas">Ambas</option>
-              </select>
-            </div>
-
-            {msg && (
-              <p className={`text-sm font-medium ${msg.includes('Error') ? 'text-red-600' : 'text-green-600'}`}>
-                {msg}
-              </p>
-            )}
-
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="btn-primary w-full flex items-center justify-center gap-2"
-            >
-              {saving ? <LoadingSpinner size="sm" color="white" /> : null}
-              {saving ? 'Guardando...' : 'Guardar cambios'}
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {[
-              { label: 'Nombre completo', value: `${profile.nombre} ${profile.apellido}` },
-              { label: 'CI', value: profile.ci },
-              { label: 'Teléfono', value: profile.telefono || 'No registrado' },
-              { label: 'Pierna hábil', value: profile.pierna_habil ? profile.pierna_habil.charAt(0).toUpperCase() + profile.pierna_habil.slice(1) : 'No registrado' },
-              { label: 'Email', value: profile.email || '—' },
-            ].map((field) => (
-              <div key={field.label} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                <span className="text-sm text-gray-500">{field.label}</span>
-                <span className="text-sm font-semibold text-gray-800">{field.value}</span>
-              </div>
+                {op.charAt(0).toUpperCase() + op.slice(1)}
+              </button>
             ))}
-            {msg && (
-              <p className="text-sm text-green-600 font-medium">{msg}</p>
-            )}
           </div>
-        )}
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-500 mb-1">Teléfono</label>
+          <TeléfonoField profile={profile} refreshProfile={refreshProfile} supabase={supabase} />
+        </div>
       </div>
+    </div>
+  )
+}
+
+function TeléfonoField({ profile, refreshProfile, supabase }) {
+  const [val, setVal] = useState(profile.telefono || '')
+  const [saved, setSaved] = useState(false)
+
+  const save = async () => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ telefono: val })
+      .eq('id', profile.id)
+    if (!error) {
+      refreshProfile()
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    }
+  }
+
+  return (
+    <div className="flex gap-2">
+      <input
+        type="tel"
+        value={val}
+        onChange={(e) => setVal(e.target.value)}
+        placeholder="099 123 456"
+        className="input-field flex-1"
+      />
+      <button
+        onClick={save}
+        className="px-3 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-900 transition-colors"
+      >
+        {saved ? '✓' : 'Guardar'}
+      </button>
     </div>
   )
 }
